@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: deltageo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
