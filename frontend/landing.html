@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DeltaGeo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#003908",
+                    "primary": "#afffa6",
+                    "on-tertiary-fixed": "#161c23",
+                    "tertiary-fixed-dim": "#c1c7d1",
+                    "on-tertiary-container": "#535962",
+                    "background": "#05070a",
+                    "on-tertiary": "#2b3139",
+                    "on-background": "#e3e2e2",
+                    "surface": "#121414",
+                    "on-error-container": "#ffdad6",
+                    "secondary": "#c4c6ce",
+                    "on-primary-container": "#0f671c",
+                    "surface-bright": "#38393a",
+                    "on-primary-fixed": "#002203",
+                    "secondary-container": "#464950",
+                    "primary-fixed-dim": "#86da80",
+                    "primary-container": "#8fe388",
+                    "surface-variant": "#333535",
+                    "surface-container-lowest": "#05070a",
+                    "on-secondary-fixed-variant": "#44474d",
+                    "tertiary-container": "#cad0da",
+                    "outline-variant": "#40493d",
+                    "error-container": "#93000a",
+                    "inverse-surface": "#e3e2e2",
+                    "surface-dim": "#121414",
+                    "surface-container-low": "#1a1c1c",
+                    "on-secondary-container": "#b6b8c0",
+                    "on-surface-variant": "#bfcab9",
+                    "inverse-on-surface": "#2f3131",
+                    "surface-container-high": "#292a2b",
+                    "on-secondary": "#2d3037",
+                    "secondary-fixed": "#e1e2ea",
+                    "outline": "#8a9485",
+                    "error": "#ffb4ab",
+                    "on-surface": "#e3e2e2",
+                    "surface-container": "#1e2020",
+                    "on-secondary-fixed": "#191c22",
+                    "on-tertiary-fixed-variant": "#414750",
+                    "inverse-primary": "#196d21",
+                    "surface-tint": "#86da80",
+                    "on-primary-fixed-variant": "#005311",
+                    "surface-container-highest": "#333535",
+                    "secondary-fixed-dim": "#c4c6ce",
+                    "tertiary-fixed": "#dde3ed",
+                    "primary-fixed": "#a2f799",
+                    "tertiary": "#e7ecf7",
+                    "on-error": "#690005"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "margin": "24px",
+                    "xl": "40px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "sm": "8px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "telemetry-data": ["JetBrains Mono"],
+                    "label-mono": ["JetBrains Mono"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "body-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "telemetry-data": ["10px", {"lineHeight": "12px", "fontWeight": "700"}],
+                    "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            position: absolute;
+            pointer-events: none;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(143, 227, 136, 0.2) 50%, rgba(255,255,255,0));
+            animation: scan 6s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: -100px; }
+            100% { top: 100%; }
+        }
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            border-bottom: 1px solid #40493d;
+            border-top: 1px solid #40493d;
+            background-color: #05070a;
+        }
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            animation-name: ticker;
+            animation-duration: 20s;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+
+<main class="flex-grow flex flex-col">
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center overflow-hidden w-full border-b border-outline-variant bg-surface-container-lowest">
+<div class="absolute right-[-10%] top-0 w-[70%] h-full opacity-60" id="three-globe-container"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('three-globe-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.z = 15;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const primaryColor = 0x8FE388;
+
+        // Background Stars
+        const starsGeo = new THREE.BufferGeometry();
+        const starsVertices = [];
+        for(let i=0; i<1500; i++) {
+            starsVertices.push(
+                THREE.MathUtils.randFloatSpread(100),
+                THREE.MathUtils.randFloatSpread(100),
+                THREE.MathUtils.randFloatSpread(100)
+            );
+        }
+        starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+        const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: 0.6 });
+        const stars = new THREE.Points(starsGeo, starsMat);
+        scene.add(stars);
+
+        const globeGroup = new THREE.Group();
+        globeGroup.scale.set(1.2, 1.2, 1.2);
+        scene.add(globeGroup);
+
+        // Wireframe Globe
+        const sphereGeo = new THREE.SphereGeometry(5, 32, 32);
+        const wireframeMat = new THREE.LineBasicMaterial({ color: primaryColor, transparent: true, opacity: 0.3 });
+        const wireframe = new THREE.LineSegments(new THREE.WireframeGeometry(sphereGeo), wireframeMat);
+        globeGroup.add(wireframe);
+
+        // Orbital Rings
+        const ringGeo1 = new THREE.TorusGeometry(6, 0.015, 16, 100);
+        const ringMat = new THREE.LineBasicMaterial({ color: primaryColor, transparent: true, opacity: 0.5 });
+        const ring1 = new THREE.Line(new THREE.WireframeGeometry(ringGeo1), ringMat);
+        ring1.rotation.x = Math.PI / 2;
+        globeGroup.add(ring1);
+
+        const ringGeo2 = new THREE.TorusGeometry(6.8, 0.015, 16, 100);
+        const ring2 = new THREE.Line(new THREE.WireframeGeometry(ringGeo2), ringMat);
+        ring2.rotation.x = Math.PI / 3;
+        ring2.rotation.y = Math.PI / 6;
+        globeGroup.add(ring2);
+
+        // Detection Pings
+        const pingGeo = new THREE.SphereGeometry(0.12, 8, 8);
+        const pingMat = new THREE.MeshBasicMaterial({ color: primaryColor });
+        for(let i=0; i<6; i++) {
+            const ping = new THREE.Mesh(pingGeo, pingMat);
+            const phi = Math.acos(THREE.MathUtils.randFloat(-1, 1));
+            const theta = THREE.MathUtils.randFloat(0, 2 * Math.PI);
+            ping.position.setFromSphericalCoords(5, phi, theta);
+            globeGroup.add(ping);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            globeGroup.rotation.y += 0.0015;
+            globeGroup.rotation.x += 0.0005;
+            stars.rotation.y -= 0.0002;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    });
+</script>
+<div class="scanline"></div>
+<div class="relative z-20 w-full max-w-[1440px] px-margin mx-auto flex items-center">
+    <div class="flex flex-col items-start text-left max-w-3xl space-y-lg">
+        <div class="text-[#8FE388] text-8xl mb-2 font-bold" style="font-family: 'Caveat', cursive;">DeltaGeo</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface lg:text-[64px] lg:leading-[72px]">
+                    See What Changed <br class="hidden md:block"/><span class="text-[#8FE388] glow-primary">on Earth.</span>
+</h1>
+
+<div class="mt-lg pt-sm flex space-x-md">
+<a href="/dashboard" class="bg-[#8FE388] text-on-primary-container font-label-mono text-label-mono uppercase px-lg py-md flex items-center space-x-sm border border-[#8FE388] hover:bg-transparent hover:text-[#8FE388] transition-all duration-200 active:scale-95 shadow-[0_0_15px_rgba(143,227,136,0.3)] hover:shadow-[0_0_25px_rgba(143,227,136,0.5)]" style="text-decoration: none;">
+<span class="">Launch Dashboard</span>
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+</a>
+<button onclick="toggleHelpModal()" class="bg-[#8FE388] text-on-primary-container font-label-mono text-label-mono uppercase px-lg py-md flex items-center space-x-sm border border-[#8FE388] hover:bg-transparent hover:text-[#8FE388] transition-all duration-200 active:scale-95 shadow-[0_0_15px_rgba(143,227,136,0.3)] hover:shadow-[0_0_25px_rgba(143,227,136,0.5)]">
+<span class="">Help</span>
+<span class="material-symbols-outlined text-[18px]">help</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+
+
+
+<!-- Help Modal -->
+<div id="helpModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/70 backdrop-blur-sm transition-opacity">
+  <div class="bg-white border border-gray-200 p-xl rounded-xl max-w-2xl w-full mx-4 shadow-2xl relative">
+    <button onclick="toggleHelpModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h2 class="font-headline-lg text-headline-md text-gray-900 mb-6">How to use this project</h2>
+    <div class="text-gray-700 space-y-4">
+      <div class="flex gap-4">
+        <div class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold">1</div>
+        <p><strong>Upload Images:</strong> Start by uploading your <em>Before</em> (T1) and <em>After</em> (T2) satellite images into the dropzones.</p>
+      </div>
+      <div class="flex gap-4">
+        <div class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold">2</div>
+        <p><strong>Set Threshold:</strong> Adjust the confidence threshold slider to filter out weak detections, and toggle the 'Filter Natural Changes' option if needed.</p>
+      </div>
+      <div class="flex gap-4">
+        <div class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold">3</div>
+        <p><strong>Select Sensor Platform:</strong> Choose the appropriate satellite sensor profile (e.g., <strong>Sentinel-2 MSI (10m)</strong> or <strong>ISRO LISS-4 (5.8m)</strong>) to ensure the AI calibrates to the correct spatial resolution for your images.</p>
+      </div>
+      <div class="flex gap-4">
+        <div class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold">4</div>
+        <p><strong>Run Analysis:</strong> Click 'Run Change Detection' to execute the forward pass and process the images through the AI model.</p>
+      </div>
+      <div class="flex gap-4">
+        <div class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold">5</div>
+        <p><strong>Get Output:</strong> You will receive a comprehensive analysis including: a visual <strong>Heatmap</strong> (AI confidence), precise <strong>Bounding Boxes</strong> around affected areas, the total <strong>Anomaly Cluster Count</strong>, the <strong>Dominant Change Category</strong> (e.g., Construction, Excavation), processing metrics (latency/accuracy), and the ability to download a professional <strong>GeoJSON</strong> or <strong>PDF Audit Report</strong>.</p>
+      </div>
+    </div>
+    <div class="mt-8 flex justify-end">
+      <button onclick="toggleHelpModal()" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-lg py-sm rounded transition-all font-label-mono uppercase text-sm shadow-sm">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleHelpModal() {
+    const modal = document.getElementById('helpModal');
+    modal.classList.toggle('hidden');
+  }
+</script>
+</main>
+
+</body></html>
